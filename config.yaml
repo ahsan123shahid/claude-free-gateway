@@ -1,0 +1,203 @@
+# LiteLLM proxy config — Claude Desktop/CLI -> free model gateway
+# Proxy: http://127.0.0.1:4000
+#
+# Keys yahan direct nahi hain — sab .env file se aati hain (gitignored).
+# .env mein sirf yeh 2 zaroori hain:
+#   EXPERIENTIAL_API_KEY=xpl_...
+#   OPENROUTER_API_KEY=sk-or-v1-...     (optional fallback ke liye)
+#
+# App SIRF Anthropic-format namon ko accept karta hai (gpt/deepseek/mimo names
+# reject ho jate hain). Isliye free models Claude-style route namon se expose
+# kiye gaye hain; asli model yahan map hota hai:
+#
+#   claude-sonnet-4-5-20250929 -> GPT-6 Luna       (FREE)  [Sonnet slot]
+#   claude-haiku-4-5-20251001  -> GPT-6 Luna       (FREE)  [Haiku slot]
+#   claude-luna-5-6            -> GPT-5.6 Luna     (cheap)
+#   claude-flash-free          -> DeepSeek V4 Flash (FREE)
+#   claude-pro-2-6             -> MiMo v2.6 Pro    (FREE)
+#   claude-opus-5-5            -> Claude Opus 5.5  (paid, strong)
+#   claude-sonnet-5            -> GPT-6 Luna       (FREE)
+
+model_list:
+  # --- Sonnet slot: free flagship ---
+  - model_name: claude-sonnet-4-5-20250929
+    litellm_params:
+      model: "anthropic/gpt-6-luna"
+      api_base: "https://api.experientiallabs.ai"
+      api_key: "os.environ/EXPERIENTIAL_API_KEY"
+      drop_params: true
+      additional_drop_params: ["thinking"]
+
+  - model_name: claude-sonnet-4-5
+    litellm_params:
+      model: "anthropic/gpt-6-luna"
+      api_base: "https://api.experientiallabs.ai"
+      api_key: "os.environ/EXPERIENTIAL_API_KEY"
+      drop_params: true
+      additional_drop_params: ["thinking"]
+
+  - model_name: claude-sonnet-5
+    litellm_params:
+      model: "anthropic/gpt-6-luna"
+      api_base: "https://api.experientiallabs.ai"
+      api_key: "os.environ/EXPERIENTIAL_API_KEY"
+      drop_params: true
+      additional_drop_params: ["thinking"]
+
+  # --- Haiku slot: free fast ---
+  - model_name: claude-haiku-4-5-20251001
+    litellm_params:
+      model: "anthropic/gpt-6-luna"
+      api_base: "https://api.experientiallabs.ai"
+      api_key: "os.environ/EXPERIENTIAL_API_KEY"
+      drop_params: true
+      additional_drop_params: ["thinking"]
+
+  - model_name: claude-haiku-4-5
+    litellm_params:
+      model: "anthropic/gpt-6-luna"
+      api_base: "https://api.experientiallabs.ai"
+      api_key: "os.environ/EXPERIENTIAL_API_KEY"
+      drop_params: true
+      additional_drop_params: ["thinking"]
+
+  # --- Opus slot: paid, strong ---
+  - model_name: claude-opus-5-5
+    litellm_params:
+      model: "anthropic/claude-opus-5.5"
+      api_base: "https://api.experientiallabs.ai"
+      api_key: "os.environ/EXPERIENTIAL_API_KEY"
+      drop_params: true
+      additional_drop_params: ["thinking"]
+
+  - model_name: claude-opus-5
+    litellm_params:
+      model: "anthropic/claude-opus-5.5"
+      api_base: "https://api.experientiallabs.ai"
+      api_key: "os.environ/EXPERIENTIAL_API_KEY"
+      drop_params: true
+      additional_drop_params: ["thinking"]
+
+  # --- Free model aliases (Claude-style names -> free models) ---
+  - model_name: claude-luna-5-6
+    litellm_params:
+      model: "anthropic/gpt-5.6-luna"
+      api_base: "https://api.experientiallabs.ai"
+      api_key: "os.environ/EXPERIENTIAL_API_KEY"
+      drop_params: true
+      additional_drop_params: ["thinking"]
+
+  - model_name: claude-flash-free
+    litellm_params:
+      model: "anthropic/deepseek-v4-flash"
+      api_base: "https://api.experientiallabs.ai"
+      api_key: "os.environ/EXPERIENTIAL_API_KEY"
+      drop_params: true
+      additional_drop_params: ["thinking"]
+
+  - model_name: claude-pro-2-6
+    litellm_params:
+      model: "anthropic/mimo-v2.6-pro"
+      api_base: "https://api.experientiallabs.ai"
+      api_key: "os.environ/EXPERIENTIAL_API_KEY"
+      drop_params: true
+      additional_drop_params: ["thinking"]
+
+  # --- Direct free-model names (API tests ke liye; app picker inhein reject karta hai) ---
+  - model_name: gpt-6-luna
+    litellm_params:
+      model: "anthropic/gpt-6-luna"
+      api_base: "https://api.experientiallabs.ai"
+      api_key: "os.environ/EXPERIENTIAL_API_KEY"
+      drop_params: true
+      additional_drop_params: ["thinking"]
+
+  - model_name: gpt-5.6-luna
+    litellm_params:
+      model: "anthropic/gpt-5.6-luna"
+      api_base: "https://api.experientiallabs.ai"
+      api_key: "os.environ/EXPERIENTIAL_API_KEY"
+      drop_params: true
+      additional_drop_params: ["thinking"]
+
+  - model_name: deepseek-v4-flash
+    litellm_params:
+      model: "anthropic/deepseek-v4-flash"
+      api_base: "https://api.experientiallabs.ai"
+      api_key: "os.environ/EXPERIENTIAL_API_KEY"
+      drop_params: true
+      additional_drop_params: ["thinking"]
+
+  - model_name: mimo-v2.6-pro
+    litellm_params:
+      model: "anthropic/mimo-v2.6-pro"
+      api_base: "https://api.experientiallabs.ai"
+      api_key: "os.environ/EXPERIENTIAL_API_KEY"
+      drop_params: true
+      additional_drop_params: ["thinking"]
+
+  # Catch-all: koi bhi aur Claude model name -> free gpt-6-luna
+  - model_name: "*"
+    litellm_params:
+      model: "anthropic/gpt-6-luna"
+      api_base: "https://api.experientiallabs.ai"
+      api_key: "os.environ/EXPERIENTIAL_API_KEY"
+      drop_params: true
+      additional_drop_params: ["thinking"]
+
+  # --- OpenRouter FREE fallback (jab Experiential Labs quota khatam ho) ---
+  # Proxy-internal group; app ke picker mein nahi dikhta (inferenceModels explicit hai).
+  # OPENROUTER_API_KEY na ho to ye entries error log dengi, proxy phir bhi chalega.
+  - model_name: or-free
+    litellm_params:
+      model: "openrouter/poolside/laguna-s-2.1:free"
+      api_key: "os.environ/OPENROUTER_API_KEY"
+      drop_params: true
+      additional_drop_params: ["thinking"]
+
+  - model_name: or-free
+    litellm_params:
+      model: "openrouter/cohere/north-mini-code:free"
+      api_key: "os.environ/OPENROUTER_API_KEY"
+      drop_params: true
+      additional_drop_params: ["thinking"]
+
+  - model_name: or-free
+    litellm_params:
+      model: "openrouter/qwen/qwen3.8-27b:free"
+      api_key: "os.environ/OPENROUTER_API_KEY"
+      drop_params: true
+      additional_drop_params: ["thinking"]
+
+  - model_name: or-free
+    litellm_params:
+      model: "openrouter/nvidia/nemotron-3-super-120b-a12b:free"
+      api_key: "os.environ/OPENROUTER_API_KEY"
+      drop_params: true
+      additional_drop_params: ["thinking"]
+
+  - model_name: or-free
+    litellm_params:
+      model: "openrouter/inclusionai/ling-3.0-flash-sante:free"
+      api_key: "os.environ/OPENROUTER_API_KEY"
+      drop_params: true
+      additional_drop_params: ["thinking"]
+
+litellm_settings:
+  drop_params: true
+  callbacks: custom_hooks.proxy_handler_instance
+
+# Jab primary (Experiential Labs) 429/quota/error de -> OpenRouter free par switch
+router_settings:
+  num_retries: 2
+  fallbacks:
+    - claude-sonnet-4-5-20250929: ["or-free"]
+    - claude-sonnet-4-5: ["or-free"]
+    - claude-sonnet-5: ["or-free"]
+    - claude-haiku-4-5-20251001: ["or-free"]
+    - claude-haiku-4-5: ["or-free"]
+    - claude-opus-5-5: ["or-free"]
+    - claude-opus-5: ["or-free"]
+    - claude-luna-5-6: ["or-free"]
+    - claude-flash-free: ["or-free"]
+    - claude-pro-2-6: ["or-free"]

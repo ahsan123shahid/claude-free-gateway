@@ -1,0 +1,11 @@
+# ZAROORI: ye files/secrets kabhi commit mat karein
+.env
+logs/
+backup/
+__pycache__/
+*.pyc
+*.log
+test.pdf
+test.b64
+.claude/
+.vscode/

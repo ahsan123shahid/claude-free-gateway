@@ -1,0 +1,20 @@
+{
+  "inferenceProvider": "gateway",
+  "inferenceGatewayBaseUrl": "http://127.0.0.1:4000",
+  "inferenceGatewayApiKey": "dummy-bypass-key",
+  "inferenceCredentialKind": "static",
+  "inferenceGatewayAuthScheme": "bearer",
+  "disableDeploymentModeChooser": true,
+  "inferenceModels": [
+    { "name": "claude-sonnet-4-5-20250929", "labelOverride": "GPT-6 Luna (FREE) - Sonnet slot", "anthropicFamilyTier": "sonnet", "isFamilyDefault": true },
+    { "name": "claude-haiku-4-5-20251001", "labelOverride": "GPT-6 Luna Fast (FREE) - Haiku slot", "anthropicFamilyTier": "haiku", "isFamilyDefault": true },
+    { "name": "claude-opus-5-5", "labelOverride": "Claude Opus 5.5 (paid, strong)", "anthropicFamilyTier": "opus", "isFamilyDefault": true },
+    { "name": "claude-sonnet-5", "labelOverride": "GPT-6 Luna (FREE) - Sonnet 5", "anthropicFamilyTier": "sonnet" },
+    { "name": "claude-sonnet-4-5", "labelOverride": "GPT-6 Luna (FREE) - Sonnet alias", "anthropicFamilyTier": "sonnet" },
+    { "name": "claude-haiku-4-5", "labelOverride": "GPT-6 Luna Fast (FREE) - Haiku alias", "anthropicFamilyTier": "haiku" },
+    { "name": "claude-opus-5", "labelOverride": "Claude Opus 5 (paid, strong)", "anthropicFamilyTier": "opus" },
+    { "name": "claude-luna-5-6", "labelOverride": "GPT-5.6 Luna (cheap)" },
+    { "name": "claude-flash-free", "labelOverride": "DeepSeek V4 Flash (FREE)" },
+    { "name": "claude-pro-2-6", "labelOverride": "MiMo v2.6 Pro (FREE)" }
+  ]
+}

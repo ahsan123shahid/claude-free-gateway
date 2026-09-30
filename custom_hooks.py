@@ -8,6 +8,11 @@
 #
 # Jugaad #2 — max_tokens ka minimum 16 (gateway requirement). Desktop app ke
 #   health probes max_tokens=1 bhejte hain, isse 400 aata tha.
+#
+# Jugaad #3 — image blocks ke liye model auto-switch. Experiential Labs ke
+#   free text-only models (MiMo, DeepSeek) image input par 400 dete hain.
+#   Yeh hook image block dekhte hi request ko vision-capable route
+#   (gpt-6-luna) par shift kar deta hai -> "pic" wale messages bhi padh jate hain.
 
 import base64
 import io
@@ -19,6 +24,31 @@ from litellm.integrations.custom_logger import CustomLogger
 logger = logging.getLogger("claude_jugaad")
 
 MIN_MAX_TOKENS = 16
+
+# Image input nahi le sake wale routes (test kiya gaya: 400 invalid_request)
+IMAGE_BAD_MODELS = {
+    "claude-pro-2-6",        # mimo-v2.6-pro
+    "claude-flash-free",     # deepseek-v4-flash
+    "mimo-v2.6-pro",
+    "deepseek-v4-flash",
+    "or-free",               # OR free group: image-capable entries nahi
+}
+# Vision-capable jahan image aate hi shift karna hai
+IMAGE_ROUTE_TARGET = "claude-sonnet-4-5-20250929"  # -> gpt-6-luna (images OK)
+
+
+def _has_image_block(content: Any) -> bool:
+    if isinstance(content, str):
+        return False
+    if isinstance(content, list):
+        for block in content:
+            if isinstance(block, dict):
+                if block.get("type") == "image":
+                    return True
+                if block.get("type") == "tool_result":
+                    if _has_image_block(block.get("content")):
+                        return True
+    return False
 
 
 def _extract_pdf_text(raw: bytes) -> str:
@@ -124,6 +154,21 @@ class ClaudeJugaadHook(CustomLogger):
                 for msg in messages:
                     if isinstance(msg, dict) and "content" in msg:
                         msg["content"] = _convert_content(msg["content"])
+
+                # Jugaad #3: image present ho to text-only route ko vision par shift
+                model = data.get("model")
+                if isinstance(model, str) and model in IMAGE_BAD_MODELS:
+                    has_image = _has_image_block(data.get("system")) or any(
+                        isinstance(m, dict) and _has_image_block(m.get("content"))
+                        for m in messages
+                    )
+                    if has_image:
+                        logger.info(
+                            "image request on %s -> switching to %s",
+                            model,
+                            IMAGE_ROUTE_TARGET,
+                        )
+                        data["model"] = IMAGE_ROUTE_TARGET
 
             system = data.get("system")
             if isinstance(system, list):

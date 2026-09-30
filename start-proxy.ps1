@@ -59,11 +59,19 @@ Start-Process -FilePath $litellm `
     -RedirectStandardError $err `
     -WindowStyle Hidden
 
-Start-Sleep -Seconds 6
-try {
-    $r = Invoke-RestMethod -Uri "http://127.0.0.1:4000/health/liveliness" -TimeoutSec 10
-    Write-Host "Proxy chal raha hai: $r" -ForegroundColor Green
-} catch {
-    Write-Host "Proxy start hua lekin health check fail: $($_.Exception.Message)" -ForegroundColor Red
-    Write-Host "Logs dekhein: $out / $err"
+# Health check: uvicorn boot hone mein 10-20s leta hai -> retry loop
+$alive = $false
+foreach ($try in 1..30) {
+    Start-Sleep -Seconds 2
+    try {
+        $r = Invoke-RestMethod -Uri "http://127.0.0.1:4000/health/liveliness" -TimeoutSec 5
+        $alive = $true
+        break
+    } catch { }
+}
+if ($alive) {
+    Write-Host "Proxy chal raha hai: $r  (boot $($try * 2)s)" -ForegroundColor Green
+} else {
+    Write-Host "Proxy start hua lekin health check fail - logs dekhein:" -ForegroundColor Red
+    Write-Host "$out / $err"
 }

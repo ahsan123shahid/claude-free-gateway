@@ -68,14 +68,17 @@ GATEWAY_LOCAL_KEY=dummy-bypass-key
 
 ## Model slots (app picker mein jo dikhta hai)
 
-| App model naam | Asli model | Cost |
-|---|---|---|
-| `claude-sonnet-4-5-20250929` | GPT-6 Luna | FREE |
-| `claude-haiku-4-5-20251001` | GPT-6 Luna (fast) | FREE |
-| `claude-flash-free` | DeepSeek V4 Flash | FREE |
-| `claude-pro-2-6` | MiMo v2.6 Pro | FREE |
-| `claude-luna-5-6` | GPT-5.6 Luna | cheap |
-| `claude-opus-5-5` | Claude Opus 5.5 | paid |
+| App model naam | Asli model | Images? | Cost |
+|---|---|---|---|
+| `claude-sonnet-4-5-20250929` | GPT-6 Luna | ✅ | FREE |
+| `claude-haiku-4-5-20251001` | GPT-6 Luna (fast) | ✅ | FREE |
+| `claude-flash-free` | DeepSeek V4 Flash | → Luna par auto-shift | FREE |
+| `claude-pro-2-6` | MiMo v2.6 Pro | → Luna par auto-shift | FREE |
+| `claude-luna-5-6` | GPT-5.6 Luna | ✅ | cheap |
+| `claude-opus-5-5` | Claude Opus 5.5 | ✅ | paid |
+
+**Pic attach ki?** Image block aate hi hook text-only routes (MiMo/DeepSeek) ko
+GPT-6 Luna par shift kar deta hai — aapko kuch karna nahi.
 
 Ye naam app **sirf Anthropic-style** accept karta hai — isliye free models isi tarah map hue hain.
 Jab Experiential Labs ka quota khatam hota hai, LiteLLM **khud-ba-khud OpenRouter free par switch** kar deta hai (`router_settings.fallbacks`).
@@ -86,11 +89,15 @@ Jab Experiential Labs ka quota khatam hota hai, LiteLLM **khud-ba-khud OpenRoute
 
 1. **PDF/Document support** — free models PDF input nahi lete. `custom_hooks.py`
    request ke andar PDF ko locally text mein convert kar deta hai → koi bhi free model
-   document parh leta hai. (Images nahi — sirf PDF/text documents.)
-2. **`max_tokens ≥ 16` fix** — Desktop app health probes `max_tokens:1` bhejte hain,
+   document parh leta hai.
+2. **Image/Pic support** — MiMo/DeepSeek text-only routes image par 400 dete hain.
+   Hook image block dekhte hi request ko **GPT-6 Luna (vision)** par auto-shift kar
+   deta hai → screenshots/pics/chat images har model par padh jate hain.
+3. **`max_tokens ≥ 16` fix** — Desktop app health probes `max_tokens:1` bhejte hain,
    gateway 429/400 deta tha; hook use 16 par raise kar deta hai.
-3. **Auto fallback** — primary 429/quota de to OpenRouter free models apne aap.
-4. **Detached proxy** — proxy window band hone par bhi chalta rehta hai.
+4. **Auto fallback** — primary 429/quota de to OpenRouter free (image-capable) models
+   apne aap.
+5. **Detached proxy** — proxy window band hone par bhi chalta rehta hai.
 
 ---
 
@@ -149,6 +156,7 @@ Aur `.env` mein `MERA_API_KEY=...` add kar dein.
 | Port 4000 already in use | `Get-NetTCPConnection -LocalPort 4000` → PID `Stop-Process` |
 | Proxy health fail | `logs\proxy.err.log` dekhein (keys ya path issue) |
 | App model picker mein nahi | App restart; `configLibrary\_meta.json` check |
+| Pic/PDF read nahi raha | Proxy restart (`custom_hooks.py` naya load ho) — phir bhi na ho to `logs\proxy.err.log` |
 | PDF wala error | Proxy restart (hook `custom_hooks.py` load hone ke liye) |
 | 429 quota exhausted | Fallback khud chalta hai — `.env` mein `OPENROUTER_API_KEY` dalein |
 | CLI ne purana response diya | `~/.claude/settings.json` mein `ANTHROPIC_BASE_URL` check |

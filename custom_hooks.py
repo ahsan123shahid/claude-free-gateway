@@ -13,6 +13,11 @@
 #   free text-only models (MiMo, DeepSeek) image input par 400 dete hain.
 #   Yeh hook image block dekhte hi request ko vision-capable route
 #   (gpt-6-luna) par shift kar deta hai -> "pic" wale messages bhi padh jate hain.
+#
+# Jugaad #3b — URL-type images (`source.type == "url"`) ko locally download
+#   karke base64 mein badal deta hai. Kai image-host providers ke server-side
+#   fetcher ko block karte hain (403/404); local fetch aam tor par chal jata hai.
+#   Download fail ho to original URL block hi rehne deta hai.
 
 import base64
 import io
@@ -106,6 +111,18 @@ def _convert_document_block(block: dict) -> dict:
     return {"type": "text", "text": header + text}
 
 
+def _sniff_image_mime(raw: bytes) -> Optional[str]:
+    if raw[:8] == b"\x89PNG\r\n\x1a\n":
+        return "image/png"
+    if raw[:2] == b"\xff\xd8":
+        return "image/jpeg"
+    if raw[:6] in (b"GIF87a", b"GIF89a"):
+        return "image/gif"
+    if raw[:4] == b"RIFF" and raw[8:12] == b"WEBP":
+        return "image/webp"
+    return None
+
+
 def _convert_block(block: Any) -> Any:
     if not isinstance(block, dict):
         return block
@@ -113,6 +130,25 @@ def _convert_block(block: Any) -> Any:
     btype = block.get("type")
     if btype == "document":
         return _convert_document_block(block)
+
+    if btype == "image":
+        source = block.get("source") or {}
+        if source.get("type") == "url":
+            try:
+                raw = _download(source.get("url", ""))
+                mime = _sniff_image_mime(raw)
+                if mime:
+                    return {
+                        "type": "image",
+                        "source": {
+                            "type": "base64",
+                            "media_type": mime,
+                            "data": base64.b64encode(raw).decode("ascii"),
+                        },
+                    }
+            except Exception as exc:  # noqa: BLE001
+                logger.warning("url image download failed (%s)", exc)
+        return block
 
     if btype == "tool_result":
         content = block.get("content")

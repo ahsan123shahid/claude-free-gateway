@@ -93,6 +93,8 @@ Jab Experiential Labs ka quota khatam hota hai, LiteLLM **khud-ba-khud OpenRoute
 2. **Image/Pic support** — MiMo/DeepSeek text-only routes image par 400 dete hain.
    Hook image block dekhte hi request ko **GPT-6 Luna (vision)** par auto-shift kar
    deta hai → screenshots/pics/chat images har model par padh jate hain.
+   URL-type images (`source.type:"url"`) khud locally download karke base64 bana
+   deta hai (jo hosts provider ke server-fetch ko block karte hain unke liye).
 3. **`max_tokens ≥ 16` fix** — Desktop app health probes `max_tokens:1` bhejte hain,
    gateway 429/400 deta tha; hook use 16 par raise kar deta hai.
 4. **Auto fallback** — primary 429/quota de to OpenRouter free (image-capable) models

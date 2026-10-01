@@ -6,20 +6,35 @@
   "inferenceGatewayAuthScheme": "bearer",
   "disableDeploymentModeChooser": true,
   "inferenceModels": [
-    { "name": "claude-sonnet-4-5-20250929", "labelOverride": "GPT-6 Luna (FREE) - Sonnet slot", "anthropicFamilyTier": "sonnet", "isFamilyDefault": true },
-    { "name": "claude-haiku-4-5-20251001", "labelOverride": "GPT-6 Luna Fast (FREE) - Haiku slot", "anthropicFamilyTier": "haiku", "isFamilyDefault": true },
-    { "name": "claude-opus-5-5", "labelOverride": "Claude Opus 5.5 (paid, strong)", "anthropicFamilyTier": "opus", "isFamilyDefault": true },
-    { "name": "claude-sonnet-5", "labelOverride": "GPT-6 Luna (FREE) - Sonnet 5", "anthropicFamilyTier": "sonnet" },
-    { "name": "claude-sonnet-4-5", "labelOverride": "GPT-6 Luna (FREE) - Sonnet alias", "anthropicFamilyTier": "sonnet" },
-    { "name": "claude-haiku-4-5", "labelOverride": "GPT-6 Luna Fast (FREE) - Haiku alias", "anthropicFamilyTier": "haiku" },
-    { "name": "claude-opus-5", "labelOverride": "Claude Opus 5 (paid, strong)", "anthropicFamilyTier": "opus" },
-    { "name": "claude-luna-5-6", "labelOverride": "GPT-5.6 Luna (cheap)" },
-    { "name": "claude-flash-free", "labelOverride": "DeepSeek V4 Flash (FREE)" },
-    { "name": "claude-pro-2-6", "labelOverride": "MiMo v2.6 Pro (FREE)" },
-    { "name": "claude-tf-opus-5", "labelOverride": "Opus 5 (TokenForge FREE - window) -> falls back to Luna", "anthropicFamilyTier": "opus" },
-    { "name": "claude-tf-fable-5-1", "labelOverride": "Fable 5.1 thinking (TokenForge FREE - window)", "anthropicFamilyTier": "opus" },
-    { "name": "claude-tf-kimi-k3", "labelOverride": "Kimi K3 (TokenForge FREE - window)" },
-    { "name": "claude-tf-glm-5-3", "labelOverride": "GLM-5.3 (TokenForge FREE - window)" },
-    { "name": "claude-tf-opus-4-6", "labelOverride": "Opus 4.6 (TokenForge FREE - window)", "anthropicFamilyTier": "opus" }
+    {
+      "name": "claude-sonnet-4-5-20250929",
+      "labelOverride": "GPT-6 Luna",
+      "anthropicFamilyTier": "sonnet",
+      "isFamilyDefault": true
+    },
+    {
+      "name": "claude-haiku-4-5-20251001",
+      "labelOverride": "GPT-6 Luna Fast",
+      "anthropicFamilyTier": "haiku",
+      "isFamilyDefault": true
+    },
+    {
+      "name": "claude-opus-5-5",
+      "labelOverride": "Claude Opus 5.5",
+      "anthropicFamilyTier": "opus",
+      "isFamilyDefault": true
+    },
+    {
+      "name": "claude-luna-5-6",
+      "labelOverride": "GPT-5.6 Luna"
+    },
+    {
+      "name": "claude-flash-free",
+      "labelOverride": "DeepSeek V4 Flash"
+    },
+    {
+      "name": "claude-pro-2-6",
+      "labelOverride": "MiMo v2.6 Pro"
+    }
   ]
 }

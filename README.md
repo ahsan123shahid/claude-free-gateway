@@ -10,7 +10,7 @@ Claude Desktop / Claude Code CLI
    LiteLLM proxy  http://127.0.0.1:4000
             │
             ├──→ Experiential Labs (free models)     [primary]
-            └──→ OpenRouter free models              [auto fallback]
+            └──→ OpenRouter free models              [optional direct route]
 ```
 
 ---
@@ -53,15 +53,15 @@ Phir **Claude Desktop restart** karein. Bas.
 
 ```env
 EXPERIENTIAL_API_KEY=xpl_...      # zaroori
-OPENROUTER_API_KEY=sk-or-v1-...   # optional fallback
+OPENROUTER_API_KEY=sk-or-v1-...   # optional (or-free direct route)
 GATEWAY_LOCAL_KEY=dummy-bypass-key
 ```
 
 | Provider | Key | Notes |
 |---|---|---|
 | [Experiential Labs](https://api.experientiallabs.ai) | `xpl_...` | Free models: GPT-6 Luna, DeepSeek V4 Flash, MiMo, GPT-5.6 Luna |
-| [OpenRouter](https://openrouter.ai) | `sk-or-v1-...` | Free tier (50 req/day) — sirf fallback |
-| [TokenForge](https://tokenforge.ai.studio) | `tf_live_...` | Free tier **time-window** mein (Discord par timings); band ho to auto-Luna fallback |
+| [OpenRouter](https://openrouter.ai) | `sk-or-v1-...` | Free tier (50 req/day) — sirf `or-free` direct route |
+| [TokenForge](https://tokenforge.ai.studio) | `tf_live_...` | Free tier **time-window** mein (Discord par timings); band ho to request fail (koi fallback nahi) |
 
 **Key kabhi commit mat karein** — `.env` gitignored hai.
 
@@ -69,21 +69,26 @@ GATEWAY_LOCAL_KEY=dummy-bypass-key
 
 ## Model slots (app picker mein jo dikhta hai)
 
-| App model naam | Asli model | Images? | Cost |
+| App model naam (picker label) | Asli model | Images? | Cost |
 |---|---|---|---|
-| `claude-sonnet-4-5-20250929` | GPT-6 Luna | ✅ | FREE |
-| `claude-haiku-4-5-20251001` | GPT-6 Luna (fast) | ✅ | FREE |
-| `claude-flash-free` | DeepSeek V4 Flash | → Luna par auto-shift | FREE |
-| `claude-pro-2-6` | MiMo v2.6 Pro | → Luna par auto-shift | FREE |
-| `claude-luna-5-6` | GPT-5.6 Luna | ✅ | cheap |
-| `claude-opus-5-5` | Claude Opus 5.5 | ✅ | paid |
-| `claude-tf-opus-5` / `claude-tf-fable-5-1` / `claude-tf-kimi-k3` / `claude-tf-glm-5-3` / `claude-tf-opus-4-6` | TokenForge free tier (window) | ✅ | FREE (window band ho to auto-Luna) |
+| `claude-sonnet-4-5-20250929` → **GPT-6 Luna** | GPT-6 Luna | ✅ | FREE |
+| `claude-haiku-4-5-20251001` → **GPT-6 Luna Fast** | GPT-6 Luna (fast) | ✅ | FREE |
+| `claude-luna-5-6` → **GPT-5.6 Luna** | GPT-5.6 Luna | ✅ | cheap |
+| `claude-flash-free` → **DeepSeek V4 Flash** | DeepSeek V4 Flash | → Luna par shift | FREE |
+| `claude-pro-2-6` → **MiMo v2.6 Pro** | MiMo v2.6 Pro | → Luna par shift | FREE |
+| `claude-opus-5-5` → **Claude Opus 5.5** | Claude Opus 5.5 | ✅ | paid |
+
+Picker mein sirf **chal rahe models** hain — dead/aliased entries hata diye gaye hain.
 
 **Pic attach ki?** Image block aate hi hook text-only routes (MiMo/DeepSeek) ko
 GPT-6 Luna par shift kar deta hai — aapko kuch karna nahi.
 
 Ye naam app **sirf Anthropic-style** accept karta hai — isliye free models isi tarah map hue hain.
-Jab Experiential Labs ka quota khatam hota hai, LiteLLM **khud-ba-khud OpenRouter free par switch** kar deta hai (`router_settings.fallbacks`).
+
+**Strict routing**: jo model picker mein select karo wahi use hota hai —
+`router_settings.fallbacks` khali hai, koi silent switch nahi. Upstream 429/de to
+error dikhega (dusra model apne aap nahi lagta). Image wali request ka visual
+reroute hi ek matr exception hai.
 
 ---
 
@@ -99,8 +104,8 @@ Jab Experiential Labs ka quota khatam hota hai, LiteLLM **khud-ba-khud OpenRoute
    deta hai (jo hosts provider ke server-fetch ko block karte hain unke liye).
 3. **`max_tokens ≥ 16` fix** — Desktop app health probes `max_tokens:1` bhejte hain,
    gateway 429/400 deta tha; hook use 16 par raise kar deta hai.
-4. **Auto fallback** — primary 429/quota de to OpenRouter free (image-capable) models
-   apne aap.
+4. **Strict routing** — jo model select karein wahi use hota hai; upstream fail
+   ho to error, silent switch nahi (`fallbacks: []`).
 5. **Detached proxy** — proxy window band hone par bhi chalta rehta hai.
 
 ---
@@ -162,7 +167,7 @@ Aur `.env` mein `MERA_API_KEY=...` add kar dein.
 | App model picker mein nahi | App restart; `configLibrary\_meta.json` check |
 | Pic/PDF read nahi raha | Proxy restart (`custom_hooks.py` naya load ho) — phir bhi na ho to `logs\proxy.err.log` |
 | PDF wala error | Proxy restart (hook `custom_hooks.py` load hone ke liye) |
-| 429 quota exhausted | Fallback khud chalta hai — `.env` mein `OPENROUTER_API_KEY` dalein |
+| 429 quota exhausted | Model fail (fallback nahi hai) — doosra model select karein; kal `OPENROUTER_API_KEY` ke `or-free` par quota reset |
 | CLI ne purana response diya | `~/.claude/settings.json` mein `ANTHROPIC_BASE_URL` check |
 
 Purani configs ka backup `backup/` mein hota hai.

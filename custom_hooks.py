@@ -166,6 +166,23 @@ def _convert_content(content: Any) -> Any:
     return content
 
 
+def _trace(line: str) -> None:
+    """Request/served model ka trace -> logs/model_trace.log (routing verify ke liye)."""
+    try:
+        import datetime
+        import os
+
+        log_path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "logs", "model_trace.log"
+        )
+        os.makedirs(os.path.dirname(log_path), exist_ok=True)
+        ts = datetime.datetime.now().strftime("%H:%M:%S")
+        with open(log_path, "a", encoding="utf-8") as fh:
+            fh.write(f"{ts} {line}\n")
+    except Exception:  # noqa: BLE001
+        pass
+
+
 class ClaudeJugaadHook(CustomLogger):
     async def async_pre_call_hook(
         self,
@@ -177,6 +194,36 @@ class ClaudeJugaadHook(CustomLogger):
         try:
             if not isinstance(data, dict):
                 return data
+
+            _trace(f"REQ  model={data.get('model')}")
+
+            # App kya identity/system-context bhej raha hai (proof ke liye)
+            sys_prompt = data.get("system")
+            if isinstance(sys_prompt, str) and sys_prompt.strip():
+                _trace(f"SYS  {sys_prompt[:300]!r}")
+            elif isinstance(sys_prompt, list):
+                texts = [
+                    b.get("text", "")
+                    for b in sys_prompt
+                    if isinstance(b, dict) and b.get("type") == "text"
+                ]
+                joined = " ".join(t for t in texts if t)
+                if joined:
+                    sys_prompt = joined
+            if isinstance(sys_prompt, str) and sys_prompt.strip():
+                # identity usually system prompt ke END par hoti hai
+                _trace(f"SYS-TAIL {sys_prompt[-400:]!r}")
+                import re
+
+                hits = re.findall(
+                    r".{0,80}(?:model ID|powered by|model name is|"
+                    r"You are (?:Claude|MiMo|GPT|DeepSeek|Qwen|Gemma)|"
+                    r"labeled in this deployment).{0,120}",
+                    sys_prompt,
+                    re.IGNORECASE,
+                )
+                for hit in hits[:4]:
+                    _trace(f"SYS-ID {hit!r}")
 
             mt = data.get("max_tokens")
             if isinstance(mt, int) and 0 <= mt < MIN_MAX_TOKENS:
@@ -205,6 +252,7 @@ class ClaudeJugaadHook(CustomLogger):
                             IMAGE_ROUTE_TARGET,
                         )
                         data["model"] = IMAGE_ROUTE_TARGET
+                        _trace(f"IMAGE-REROUTE {model} -> {IMAGE_ROUTE_TARGET}")
 
             system = data.get("system")
             if isinstance(system, list):
@@ -213,6 +261,19 @@ class ClaudeJugaadHook(CustomLogger):
             logger.warning("ClaudeJugaadHook failed: %s", exc)
 
         return data
+
+    async def async_log_success_event(
+        self, kwargs, response_obj, start_time, end_time
+    ) -> None:
+        try:
+            served = None
+            if isinstance(response_obj, dict):
+                served = response_obj.get("model")
+            if not served and isinstance(kwargs, dict):
+                served = kwargs.get("model")
+            _trace(f"OK   served={served}")
+        except Exception:  # noqa: BLE001
+            pass
 
 
 proxy_handler_instance = ClaudeJugaadHook()

@@ -4,7 +4,7 @@
 # Keys yahan direct nahi hain — sab .env file se aati hain (gitignored).
 # .env mein sirf yeh 2 zaroori hain:
 #   EXPERIENTIAL_API_KEY=xpl_...
-#   OPENROUTER_API_KEY=sk-or-v1-...     (optional fallback ke liye)
+#   OPENROUTER_API_KEY=sk-or-v1-...     (or-free direct route ke liye)
 #
 # App SIRF Anthropic-format namon ko accept karta hai (gpt/deepseek/mimo names
 # reject ho jate hain). Isliye free models Claude-style route namon se expose
@@ -231,23 +231,10 @@ litellm_settings:
   drop_params: true
   callbacks: custom_hooks.proxy_handler_instance
 
-# Jab primary (Experiential Labs) 429/quota/error de -> OpenRouter free par switch
+# STRICT routing: koi silent fallback NAHI — jo model app mein select ho,
+# wahi use hota hai; fail ho to error aata hai (user ko pata chalta hai).
+# Isliye fallbacks intentionally khali hain. Transient errors ke liye
+# num_retries (same model par hi) rakha gaya hai.
 router_settings:
   num_retries: 2
-  fallbacks:
-    - claude-sonnet-4-5-20250929: ["or-free"]
-    - claude-sonnet-4-5: ["or-free"]
-    - claude-sonnet-5: ["or-free"]
-    - claude-haiku-4-5-20251001: ["or-free"]
-    - claude-haiku-4-5: ["or-free"]
-    - claude-opus-5-5: ["or-free"]
-    - claude-opus-5: ["or-free"]
-    - claude-luna-5-6: ["or-free"]
-    - claude-flash-free: ["or-free"]
-    - claude-pro-2-6: ["or-free"]
-    # TokenForge: free tier band ho (503) to Luna par fallback
-    - claude-tf-opus-5: ["claude-sonnet-4-5-20250929"]
-    - claude-tf-opus-4-6: ["claude-sonnet-4-5-20250929"]
-    - claude-tf-fable-5-1: ["claude-sonnet-4-5-20250929"]
-    - claude-tf-kimi-k3: ["claude-sonnet-4-5-20250929"]
-    - claude-tf-glm-5-3: ["claude-sonnet-4-5-20250929"]
+  fallbacks: []

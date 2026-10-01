@@ -148,6 +148,50 @@ model_list:
       drop_params: true
       additional_drop_params: ["thinking"]
 
+  # --- TokenForge free tier (https://tokenforge.ai.studio) ---
+  # Anthropic-compatible gateway; FREE tier sirf time-window mein open hota hai
+  # (band ho to 503 -> fallback se GPT-6 Luna par chala jata hai).
+  # Key: .env mein TOKENFORGE_API_KEY
+  - model_name: claude-tf-opus-5
+    litellm_params:
+      model: "anthropic/claude-opus-5"
+      api_base: "https://tokenforge.ai.studio"
+      api_key: "os.environ/TOKENFORGE_API_KEY"
+      drop_params: true
+      additional_drop_params: ["thinking"]
+
+  - model_name: claude-tf-opus-4-6
+    litellm_params:
+      model: "anthropic/claude-opus-4.6"
+      api_base: "https://tokenforge.ai.studio"
+      api_key: "os.environ/TOKENFORGE_API_KEY"
+      drop_params: true
+      additional_drop_params: ["thinking"]
+
+  - model_name: claude-tf-fable-5-1
+    litellm_params:
+      model: "anthropic/claude-fable-5.1"
+      api_base: "https://tokenforge.ai.studio"
+      api_key: "os.environ/TOKENFORGE_API_KEY"
+      drop_params: true
+      additional_drop_params: ["thinking"]
+
+  - model_name: claude-tf-kimi-k3
+    litellm_params:
+      model: "anthropic/kimi-k3"
+      api_base: "https://tokenforge.ai.studio"
+      api_key: "os.environ/TOKENFORGE_API_KEY"
+      drop_params: true
+      additional_drop_params: ["thinking"]
+
+  - model_name: claude-tf-glm-5-3
+    litellm_params:
+      model: "anthropic/glm-5.3"
+      api_base: "https://tokenforge.ai.studio"
+      api_key: "os.environ/TOKENFORGE_API_KEY"
+      drop_params: true
+      additional_drop_params: ["thinking"]
+
   # --- OpenRouter FREE fallback (jab Experiential Labs quota khatam ho) ---
   # Proxy-internal group; app ke picker mein nahi dikhta (inferenceModels explicit hai).
   # Saare image-capable hain (text + image dono fallback ke liye safe).
@@ -180,12 +224,8 @@ model_list:
       drop_params: true
       additional_drop_params: ["thinking"]
 
-  - model_name: or-free
-    litellm_params:
-      model: "openrouter/nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
-      api_key: "os.environ/OPENROUTER_API_KEY"
-      drop_params: true
-      additional_drop_params: ["thinking"]
+  # NOTE: nvidia/nemotron-3-nano-omni removed — stream beech mein
+  # "ResourceExhausted: Worker local total request limit reached" deta tha
 
 litellm_settings:
   drop_params: true
@@ -205,3 +245,9 @@ router_settings:
     - claude-luna-5-6: ["or-free"]
     - claude-flash-free: ["or-free"]
     - claude-pro-2-6: ["or-free"]
+    # TokenForge: free tier band ho (503) to Luna par fallback
+    - claude-tf-opus-5: ["claude-sonnet-4-5-20250929"]
+    - claude-tf-opus-4-6: ["claude-sonnet-4-5-20250929"]
+    - claude-tf-fable-5-1: ["claude-sonnet-4-5-20250929"]
+    - claude-tf-kimi-k3: ["claude-sonnet-4-5-20250929"]
+    - claude-tf-glm-5-3: ["claude-sonnet-4-5-20250929"]

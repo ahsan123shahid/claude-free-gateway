@@ -15,6 +15,11 @@
     { "name": "claude-opus-5", "labelOverride": "Claude Opus 5 (paid, strong)", "anthropicFamilyTier": "opus" },
     { "name": "claude-luna-5-6", "labelOverride": "GPT-5.6 Luna (cheap)" },
     { "name": "claude-flash-free", "labelOverride": "DeepSeek V4 Flash (FREE)" },
-    { "name": "claude-pro-2-6", "labelOverride": "MiMo v2.6 Pro (FREE)" }
+    { "name": "claude-pro-2-6", "labelOverride": "MiMo v2.6 Pro (FREE)" },
+    { "name": "claude-tf-opus-5", "labelOverride": "Opus 5 (TokenForge FREE - window) -> falls back to Luna", "anthropicFamilyTier": "opus" },
+    { "name": "claude-tf-fable-5-1", "labelOverride": "Fable 5.1 thinking (TokenForge FREE - window)", "anthropicFamilyTier": "opus" },
+    { "name": "claude-tf-kimi-k3", "labelOverride": "Kimi K3 (TokenForge FREE - window)" },
+    { "name": "claude-tf-glm-5-3", "labelOverride": "GLM-5.3 (TokenForge FREE - window)" },
+    { "name": "claude-tf-opus-4-6", "labelOverride": "Opus 4.6 (TokenForge FREE - window)", "anthropicFamilyTier": "opus" }
   ]
 }

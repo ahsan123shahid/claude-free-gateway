@@ -61,6 +61,7 @@ GATEWAY_LOCAL_KEY=dummy-bypass-key
 |---|---|---|
 | [Experiential Labs](https://api.experientiallabs.ai) | `xpl_...` | Free models: GPT-6 Luna, DeepSeek V4 Flash, MiMo, GPT-5.6 Luna |
 | [OpenRouter](https://openrouter.ai) | `sk-or-v1-...` | Free tier (50 req/day) — sirf fallback |
+| [TokenForge](https://tokenforge.ai.studio) | `tf_live_...` | Free tier **time-window** mein (Discord par timings); band ho to auto-Luna fallback |
 
 **Key kabhi commit mat karein** — `.env` gitignored hai.
 
@@ -76,6 +77,7 @@ GATEWAY_LOCAL_KEY=dummy-bypass-key
 | `claude-pro-2-6` | MiMo v2.6 Pro | → Luna par auto-shift | FREE |
 | `claude-luna-5-6` | GPT-5.6 Luna | ✅ | cheap |
 | `claude-opus-5-5` | Claude Opus 5.5 | ✅ | paid |
+| `claude-tf-opus-5` / `claude-tf-fable-5-1` / `claude-tf-kimi-k3` / `claude-tf-glm-5-3` / `claude-tf-opus-4-6` | TokenForge free tier (window) | ✅ | FREE (window band ho to auto-Luna) |
 
 **Pic attach ki?** Image block aate hi hook text-only routes (MiMo/DeepSeek) ko
 GPT-6 Luna par shift kar deta hai — aapko kuch karna nahi.
